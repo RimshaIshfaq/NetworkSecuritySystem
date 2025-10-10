@@ -14,6 +14,8 @@ FILE_NAME: str = "phisingData.csv"
 TRAIN_FILE_NAME: str = "train.csv"
 TEST_FILE_NAME: str = "test.csv"
 
+SCHEMA_FILE_PATH: str = os.path.join("data_schema", "schema.yaml")
+
 '''
 Data Ingestion related constant start with DATA_INGESTION VAR NAME
 '''
@@ -26,7 +28,7 @@ DATA_INGESTION_INGESTED_DIR: str = "ingested"
 DATA_INGESTION_TRAIN_TEST_SPLIT_RATIO: float = 0.2
 
 '''
-Data Ingestion related constant start with DATA_INGESTION VAR NAME
+Data Validation related constant start with DATA_INGESTION VAR NAME
 '''
 
 DATA_VALIDATION_DIR_NAME: str = "data_validation"
