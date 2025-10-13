@@ -69,11 +69,20 @@ class DataIngestion:
             logging.info(
                 "Excited split_data_as_train_test method of Data_Ingestion class"
             )
+
+            train_file_path = self.data_ingestion_config.training_file_path
+            test_file_path = self.data_ingestion_config.testing_file_path
             dir_path = os.path.dirname(self.data_ingestion_config.training_file_path)
 
             os.makedirs(dir_path, exist_ok=True)
 
             logging.info(f"Exporting train and test file path")
+
+            train_set.to_csv(train_file_path, index=False, header=True)
+            test_set.to_csv(test_file_path, index=False, header=True)
+
+            logging.info(f"Train file saved at: {train_file_path}")
+            logging.info(f"Test file saved at: {test_file_path}")
 
         except Exception as e:
             raise NetworkSecurityException(e,sys)
