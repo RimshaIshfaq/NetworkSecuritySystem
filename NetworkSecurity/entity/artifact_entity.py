@@ -25,3 +25,10 @@ class DataValidationArtifact:
 
     def __str__(self):
         return f"DataValidationArtifact(validation_status={self.validation_status})"
+
+@dataclass
+class DataTransformationArtifact:
+    transformed_train_file_path: str
+    transformed_test_file_path: str
+    transformed_object_file_path: str 
+    preprocessed_object_file_path: str

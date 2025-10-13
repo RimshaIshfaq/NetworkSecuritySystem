@@ -1,6 +1,15 @@
 from datetime import datetime
 import os
 from NetworkSecurity.constants import training_pipeline
+from NetworkSecurity.constants.training_pipeline import (
+    DATA_TRANSFORMATION_DIR_NAME,
+    DATA_TRANSFORMATION_TRANSFORMED_DIR,
+    DATA_TRANSFORMATION_PREPROCESSING_DIR,
+    PREPROCESSING_OBJECT_FILE_NAME,
+    TRAIN_FILE_NAME,
+    TEST_FILE_NAME
+)
+
 
 print(training_pipeline.PIPELINE_NAME)
 print(training_pipeline.ARTIFACT_DIR)
@@ -11,6 +20,7 @@ class TrainingPipelineConfig:
         timestamp=timestamp.strftime("%m_%d_%Y_%H_%M_%S")
         self.pipeline_name=training_pipeline.PIPELINE_NAME
         self.artifact_name=training_pipeline.ARTIFACT_DIR
+        
         self.artifact_dir=os.path.join(self.artifact_name, timestamp)
         self.timestamp: str=timestamp
 
@@ -64,4 +74,46 @@ class DataValidationConfig:
             self.data_validation_dir,
             training_pipeline.DATA_VALIDATION_DRIFT_REPORT_DIR,
             training_pipeline.DATA_VALIDATION_DRIFT_REPORT_FILE_NAME,
+        )
+
+class DataTransformationConfig:
+    def __init__(self, training_pipeline_config):
+        # Root directory for data transformation artifacts
+        
+        self.data_transformation_dir = os.path.join(
+            training_pipeline_config.artifact_dir,
+            DATA_TRANSFORMATION_DIR_NAME,
+            DATA_TRANSFORMATION_TRANSFORMED_DIR
+        )
+
+        # Directory for transformed numpy arrays
+        self.transformed_train_file_path = os.path.join(
+            self.data_transformation_dir,
+            DATA_TRANSFORMATION_TRANSFORMED_DIR,
+            TRAIN_FILE_NAME
+        )
+
+        self.transformed_test_file_path = os.path.join(
+            self.data_transformation_dir,
+            DATA_TRANSFORMATION_TRANSFORMED_DIR,
+            TEST_FILE_NAME
+        )
+
+        #Directory to store preprocessing objects
+        preprocessed_dir = os.path.join(
+            self.data_transformation_dir,
+            DATA_TRANSFORMATION_PREPROCESSING_DIR
+        )
+        os.makedirs(preprocessed_dir, exist_ok=True)
+
+        # Path to save the main preprocessor
+        self.transformed_object_file_path = os.path.join(
+            preprocessed_dir,
+            PREPROCESSING_OBJECT_FILE_NAME
+        )
+
+        # Path to save another preprocessed object (optional)
+        self.preprocessed_object_file_path = os.path.join(
+            preprocessed_dir,
+            "preprocessed_object.pkl"
         )
