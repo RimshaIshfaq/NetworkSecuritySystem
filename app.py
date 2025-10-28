@@ -18,8 +18,11 @@ from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from uvicorn import run as app_run
+from fastapi import Request
+import pandas as pd
 from fastapi.responses import JSONResponse, Response
 from NetworkSecurity.utils.main_utils.utils import load_object
+from NetworkSecurity.utils.ml_utils.model.estimator import NetworkModel
 
 client = pymongo.MongoClient(mongo_db_url, tlsCAFile=ca)
 
@@ -40,6 +43,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.templating import Jinja2Templates
+templates = Jinja2Templates(directory="./templates")
+
 @app.get("/", tags=["authentication"])
 async def index():
     return RedirectResponse(url="/docs")
@@ -51,6 +57,23 @@ async def train_route():
         train_pipeline = TrainingPipeline()
         train_pipeline.run_pipeline()
         return Response("Training successful!!")
+    except Exception as e:
+        raise NetworkSecurityException(e, sys)
+    
+@app.get("/predict")
+async def predict_route(request: Request, file: UploadFile = File(...)):
+    try:
+        df = pd.read_csv(file.file)
+        preprocessor = load_object("final_model/preprocessor.pkl")
+        final_model = load_object("final_model/final_model.pkl")
+        network_model = NetworkModel (preprocessor, final_model)
+        print(df.iloc[0])
+        y_pred = network_model.predict(df)
+        df["predicted_column"] = y_pred
+        print(df["predicted_column"])
+        df.to_csv("prediction_output/output.csv")
+        table_html = df.to_html(classes = "table table-striped")
+        return templates.TemplateResponse("predict.html", {"request": request, "table_html": table_html})
     except Exception as e:
         raise NetworkSecurityException(e, sys)
     
